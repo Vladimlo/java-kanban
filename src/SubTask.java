@@ -1,10 +1,9 @@
 public class SubTask extends Task {
     private int epicId;
 
-    public SubTask(String name, String description, Epic epic) {
+    public SubTask(String name, String description, int epicId) {
         super(name, description);
-        this.epicId = epic.getId();
-        epic.subTasksId.add(this.getId());
+        this.epicId = epicId;
     }
 
     public int getEpicId() {

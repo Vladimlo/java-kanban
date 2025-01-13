@@ -3,14 +3,13 @@ import java.util.Objects;
 public class Task {
     private String name;
     private String description;
-    private final Integer id;
+    private Integer id;
     private TaskStatus status;
 
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
         status = TaskStatus.NEW;
-        this.id = TaskManager.incTaskCount();
     }
 
     public String getName() {
@@ -39,6 +38,10 @@ public class Task {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     @Override

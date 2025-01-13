@@ -13,9 +13,9 @@ public class Main {
         tm.createEpic(epic1);
         tm.createEpic(epic2);
 
-        SubTask subTask11 = new SubTask("Сабтаска 11", "Сабтаска для epic1", epic1);
-        SubTask subTask21 = new SubTask("Сабтаска 21", "Сабтаска для epic2", epic2);
-        SubTask subTask22 = new SubTask("Сабтаска 22", "Сабтаска для epic2", epic2);
+        SubTask subTask11 = new SubTask("Сабтаска 11", "Сабтаска для epic1", epic1.getId());
+        SubTask subTask21 = new SubTask("Сабтаска 21", "Сабтаска для epic2", epic2.getId());
+        SubTask subTask22 = new SubTask("Сабтаска 22", "Сабтаска для epic2", epic2.getId());
         tm.createSubTask(subTask11);
         tm.createSubTask(subTask21);
         tm.createSubTask(subTask22);
@@ -26,15 +26,15 @@ public class Main {
 
         task1.setStatus(TaskStatus.DONE);
         task2.setStatus(TaskStatus.IN_PROCESS);
-        tm.updateTask(task1.getId(), task1);
-        tm.updateTask(task2.getId(), task2);
+        tm.updateTask(task1);
+        tm.updateTask(task2);
 
         subTask11.setStatus(TaskStatus.DONE);
         subTask21.setStatus(TaskStatus.NEW);
         subTask22.setStatus(TaskStatus.DONE);
-        tm.updateSubTask(subTask11.getId(), subTask11);
-        tm.updateSubTask(subTask21.getId(), subTask21);
-        tm.updateSubTask(subTask22.getId(), subTask22);
+        tm.updateSubTask(subTask11);
+        tm.updateSubTask(subTask21);
+        tm.updateSubTask(subTask22);
 
         System.out.println("-".repeat(10));
 
