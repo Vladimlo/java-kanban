@@ -1,7 +1,7 @@
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager tm = new TaskManager();
+        TaskManager tm = Managers.getDefault();
 
         Task task1 = new Task("Таска 1", "Просто таска");
         Task task2 = new Task("Таска 2", "Просто еще одна таска");
@@ -41,5 +41,14 @@ public class Main {
         System.out.println(tm.getTaskList());
         System.out.println(tm.getEpicList());
         System.out.println(tm.getSubTaskList());
+
+       for (int i = 0; i <= 10; i++) {
+            tm.getSubTask(subTask22.getId());
+        }
+            tm.getTask(1);
+        tm.getTask(1);
+        System.out.println("-".repeat(10));
+        System.out.println(tm.getHistory());
+        System.out.println(tm.getHistory().size());
     }
 }
