@@ -41,14 +41,5 @@ public class Main {
         System.out.println(tm.getTaskList());
         System.out.println(tm.getEpicList());
         System.out.println(tm.getSubTaskList());
-
-       for (int i = 0; i <= 10; i++) {
-            tm.getSubTask(subTask22.getId());
-        }
-            tm.getTask(1);
-        tm.getTask(1);
-        System.out.println("-".repeat(10));
-        System.out.println(tm.getHistory());
-        System.out.println(tm.getHistory().size());
     }
 }
