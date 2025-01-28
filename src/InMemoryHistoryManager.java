@@ -1,10 +1,10 @@
 import java.util.*;
 
-public class InMemoryHistoryManager implements HistoryManager{
+public class InMemoryHistoryManager implements HistoryManager {
 
     private Node head;
     private Node tail;
-    private Map<Integer, Node> history= new HashMap<>();
+    private Map<Integer, Node> history = new HashMap<>();
 
     private static class Node {
         Node prev;
@@ -62,7 +62,7 @@ public class InMemoryHistoryManager implements HistoryManager{
         Node currentNode = head;
         List<Task> result = new ArrayList<>();
 
-        if(history.isEmpty()) return result;
+        if (history.isEmpty()) return result;
 
         boolean tailIncluded = false;
 

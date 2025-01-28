@@ -36,7 +36,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         removeAllTasksFromHistory(subTasksKeys);
 
-        for(Integer subtaskId : subTasksKeys) {
+        for (Integer subtaskId : subTasksKeys) {
             removeSubTask(subtaskId);
         }
     }
