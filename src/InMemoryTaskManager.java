@@ -25,16 +25,25 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void taskClear() {
+        removeAllTasksFromHistory(taskList.keySet());
         taskList.clear();
     }
 
     @Override
     public void subTaskClear() {
-        subTaskList.clear();
+        //Нужен что-бы не словить ConcurrentModificationException в цикле
+        Set<Integer> subTasksKeys = new HashSet<>(subTaskList.keySet());
+
+        removeAllTasksFromHistory(subTasksKeys);
+
+        for(Integer subtaskId : subTasksKeys) {
+            removeSubTask(subtaskId);
+        }
     }
 
     @Override
     public void epicClear() {
+        removeAllTasksFromHistory(epicList.keySet());
         epicList.clear();
     }
 
@@ -105,11 +114,13 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeTask(int id) {
         taskList.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
     public void removeEpic(int id) {
         epicList.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
@@ -118,6 +129,7 @@ public class InMemoryTaskManager implements TaskManager {
         epic.getSubTasksId().remove(Integer.valueOf(id));
         subTaskList.remove(id);
         updateEpicStatus(epic.getId());
+        historyManager.remove(id);
     }
 
     @Override
@@ -162,5 +174,11 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         epicList.get(epicId).setStatus(TaskStatus.IN_PROCESS);
+    }
+
+    private void removeAllTasksFromHistory(Set<Integer> ids) {
+        for (Integer id : ids) {
+            historyManager.remove(id);
+        }
     }
 }
