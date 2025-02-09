@@ -41,5 +41,12 @@ public class Main {
         System.out.println(tm.getTaskList());
         System.out.println(tm.getEpicList());
         System.out.println(tm.getSubTaskList());
+
+        tm.getTask(1);
+        tm.getTask(1);
+        tm.getTask(2);
+        tm.getTask(2);
+        tm.getEpic(3);
+        System.out.println(tm.getHistory());
     }
 }
