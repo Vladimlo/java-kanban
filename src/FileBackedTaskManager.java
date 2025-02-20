@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
-public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
+public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private static final String DELIMITER = ",";
 
@@ -91,20 +91,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         save();
     }
 
-    //Сохраняет состояние задач в файл
-    private void save() {
-        String fileContent = String.join(DELIMITER, "id", "type", "name", "status", "description", "epic")
-                + "\n";
-
-        fileContent += mapToString(taskList) + mapToString(epicList) + mapToString(subTaskList);
-
-        try (FileWriter fw = new FileWriter(path.toString())) {
-            fw.write(fileContent);
-        } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка записи в файл для сохранения" + path);
-        }
-    }
-
     //Восстанавливает состояние из файла
     public static FileBackedTaskManager loadFromFile(String path) {
         FileBackedTaskManager fm = new FileBackedTaskManager(path);
@@ -129,6 +115,20 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         }
 
         return fm;
+    }
+
+    //Сохраняет состояние задач в файл
+    private void save() {
+        String fileContent = String.join(DELIMITER, "id", "type", "name", "status", "description", "epic")
+                + "\n";
+
+        fileContent += mapToString(taskList) + mapToString(epicList) + mapToString(subTaskList);
+
+        try (FileWriter fw = new FileWriter(path.toString())) {
+            fw.write(fileContent);
+        } catch (IOException e) {
+            throw new ManagerSaveException("Ошибка записи в файл для сохранения" + path);
+        }
     }
 
     //Принимает список задач, возвращает строку для файла загрузки
