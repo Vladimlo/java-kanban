@@ -1,4 +1,4 @@
-package managers.task_managers.history_managers;
+package managers.history_managers;
 
 import tasks.Task;
 

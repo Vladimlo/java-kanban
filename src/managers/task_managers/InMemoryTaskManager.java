@@ -1,5 +1,7 @@
-package task_managers;
+package managers.task_managers;
 
+import managers.Managers;
+import managers.history_managers.HistoryManager;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
@@ -11,7 +13,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected Map<Integer, Task> taskList = new HashMap<>();
     protected Map<Integer, Epic> epicList = new HashMap<>();
     protected Map<Integer, SubTask> subTaskList = new HashMap<>();
-    private HistoryManager historyManager = Managers.getDefaultHistory();
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
 
     private static int taskCount = 1;
 

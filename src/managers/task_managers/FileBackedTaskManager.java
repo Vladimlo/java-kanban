@@ -1,4 +1,4 @@
-package task_managers;
+package managers.task_managers;
 
 import exceptions.ManagerSaveException;
 import tasks.Epic;
@@ -191,7 +191,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 fm.epicList.put(id, epic);
                 break;
             case "SubTask":
-                Integer epicId = Integer.parseInt(fields[5]);
+                int epicId = Integer.parseInt(fields[5]);
                 SubTask subTask = new SubTask(name, description, epicId);
                 subTask.setId(id);
                 subTask.setStatus(status);
