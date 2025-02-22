@@ -1,3 +1,10 @@
+package task_managers;
+
+import tasks.Epic;
+import tasks.SubTask;
+import tasks.Task;
+import tasks.TaskStatus;
+
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
