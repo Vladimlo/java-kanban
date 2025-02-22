@@ -1,7 +1,10 @@
 public class Main {
 
     public static void main(String[] args) {
+
         TaskManager tm = Managers.getDefault();
+
+        FileBackedTaskManager fm = new FileBackedTaskManager("Save.csv");
 
         Task task1 = new Task("Таска 1", "Просто таска");
         Task task2 = new Task("Таска 2", "Просто еще одна таска");
@@ -48,5 +51,26 @@ public class Main {
         tm.getTask(2);
         tm.getEpic(3);
         System.out.println(tm.getHistory());
+
+        System.out.println("-".repeat(10) + "ПРОВЕРКИ РАБОТЫ С ФАЙЛАМИ" + "-".repeat(10));
+
+        Task fmTask1 = new Task("Таска 1", "Таска для сохранения");
+        fm.createTask(fmTask1);
+
+        Epic fmEpic1 = new Epic("Эпик 1", "Эпик для сохранения");
+        fm.createEpic(fmEpic1);
+
+        SubTask fmSubTask1 = new SubTask("Сабтаска 1", "Сабтаска для сохранения", fmEpic1.getId());
+        fm.createSubTask(fmSubTask1);
+
+        FileBackedTaskManager fm2 = FileBackedTaskManager.loadFromFile("Save.csv");
+        System.out.println(fm2.getTaskList());
+        System.out.println(fm2.getEpicList());
+        System.out.println(fm2.getSubTaskList());
+
+        Task fmTask2 = new Task("Таска 2ф", "Таска для проверки создания");
+        fm2.createTask(fmTask2);
+        System.out.println(fmTask2);
+        System.out.println(fm2.getTaskList());
     }
 }

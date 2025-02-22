@@ -1,9 +1,9 @@
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    private Map<Integer, Task> taskList = new HashMap<Integer, Task>();
-    private Map<Integer, Epic> epicList = new HashMap<Integer, Epic>();
-    private Map<Integer, SubTask> subTaskList = new HashMap<Integer, SubTask>();
+    protected Map<Integer, Task> taskList = new HashMap<>();
+    protected Map<Integer, Epic> epicList = new HashMap<>();
+    protected Map<Integer, SubTask> subTaskList = new HashMap<>();
     private HistoryManager historyManager = Managers.getDefaultHistory();
 
     private static int taskCount = 1;
