@@ -6,79 +6,49 @@ import tasks.SubTask;
 import tasks.Task;
 import tasks.TaskStatus;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public class Main {
 
     public static void main(String[] args) {
 
-        TaskManager tm = Managers.getDefault();
-
         FileBackedTaskManager fm = new FileBackedTaskManager("Save.csv");
 
-        Task task1 = new Task("Таска 1", "Просто таска");
-        Task task2 = new Task("Таска 2", "Просто еще одна таска");
-        tm.createTask(task1);
-        tm.createTask(task2);
+        System.out.println("-".repeat(20) + "ПРОВЕРКА КОНФЛИКТА ЗАДАЧ" + "-".repeat(20));
 
-        Epic epic1 = new Epic("Эпик 1", "Эпик с 1 подзадачей");
-        Epic epic2 = new Epic("Эпик 2", "Эпик с 2 подзадачами");
-        tm.createEpic(epic1);
-        tm.createEpic(epic2);
+        Task taskCheckConflict1 = new Task("Таска без конфликта",
+                "Которая заканчивается когда начинается следующая",
+                LocalDateTime.of(2025, 3, 9, 12, 0),
+                Duration.ofMinutes(45));
+        Task taskCheckConflict2 = new Task("Таска без конфликта",
+                "Которая начинается когда заканчивается предыдущая",
+                LocalDateTime.of(2025, 3, 9, 12, 45),
+                Duration.ofMinutes(45));
+        Task taskCheckConflict3 = new Task("Таска с конфликтом",
+                "Которая полностью входит в другую",
+                LocalDateTime.of(2025, 3, 9, 12, 10),
+                Duration.ofMinutes(10));
+        Task taskCheckConflict4 = new Task("Таска с конфликтом",
+                "Которая полностью входит в другую но граничит датой начала",
+                LocalDateTime.of(2025, 3, 9, 12, 45),
+                Duration.ofMinutes(10));
+        Task taskCheckConflict5 = new Task("Таска с конфликтом",
+                "Которая полностью входит в другую но граничит датой окончания",
+                LocalDateTime.of(2025, 3, 9, 12, 50),
+                Duration.ofMinutes(40));
 
-        SubTask subTask11 = new SubTask("Сабтаска 11", "Сабтаска для epic1", epic1.getId());
-        SubTask subTask21 = new SubTask("Сабтаска 21", "Сабтаска для epic2", epic2.getId());
-        SubTask subTask22 = new SubTask("Сабтаска 22", "Сабтаска для epic2", epic2.getId());
-        tm.createSubTask(subTask11);
-        tm.createSubTask(subTask21);
-        tm.createSubTask(subTask22);
+        fm.createTask(taskCheckConflict1);
+        fm.createTask(taskCheckConflict2);
+        fm.createTask(taskCheckConflict3);
+        fm.createTask(taskCheckConflict4);
+        fm.createTask(taskCheckConflict5);
 
-        System.out.println(tm.getTaskList());
-        System.out.println(tm.getEpicList());
-        System.out.println(tm.getSubTaskList());
+        FileBackedTaskManager load = FileBackedTaskManager.loadFromFile("Save.csv");
 
-        task1.setStatus(TaskStatus.DONE);
-        task2.setStatus(TaskStatus.IN_PROCESS);
-        tm.updateTask(task1);
-        tm.updateTask(task2);
+        System.out.println(fm.getPrioritizedTasks());
+        System.out.println(load.getPrioritizedTasks());
 
-        subTask11.setStatus(TaskStatus.DONE);
-        subTask21.setStatus(TaskStatus.NEW);
-        subTask22.setStatus(TaskStatus.DONE);
-        tm.updateSubTask(subTask11);
-        tm.updateSubTask(subTask21);
-        tm.updateSubTask(subTask22);
 
-        System.out.println("-".repeat(10));
-
-        System.out.println(tm.getTaskList());
-        System.out.println(tm.getEpicList());
-        System.out.println(tm.getSubTaskList());
-
-        tm.getTask(1);
-        tm.getTask(1);
-        tm.getTask(2);
-        tm.getTask(2);
-        tm.getEpic(3);
-        System.out.println(tm.getHistory());
-
-        System.out.println("-".repeat(10) + "ПРОВЕРКИ РАБОТЫ С ФАЙЛАМИ" + "-".repeat(10));
-
-        Task fmTask1 = new Task("Таска 1", "Таска для сохранения");
-        fm.createTask(fmTask1);
-
-        Epic fmEpic1 = new Epic("Эпик 1", "Эпик для сохранения");
-        fm.createEpic(fmEpic1);
-
-        SubTask fmSubTask1 = new SubTask("Сабтаска 1", "Сабтаска для сохранения", fmEpic1.getId());
-        fm.createSubTask(fmSubTask1);
-
-        FileBackedTaskManager fm2 = FileBackedTaskManager.loadFromFile("Save.csv");
-        System.out.println(fm2.getTaskList());
-        System.out.println(fm2.getEpicList());
-        System.out.println(fm2.getSubTaskList());
-
-        Task fmTask2 = new Task("Таска 2ф", "Таска для проверки создания");
-        fm2.createTask(fmTask2);
-        System.out.println(fmTask2);
-        System.out.println(fm2.getTaskList());
     }
 }

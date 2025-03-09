@@ -13,9 +13,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
+    private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     private static final String DELIMITER = ",";
 
@@ -54,7 +58,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public void createEpic(Epic epic) {
         super.createEpic(epic);
-        save();
+        //Не вызываем save() т.к. а зачем нам эпик без подзадач
     }
 
     @Override
@@ -127,7 +131,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     //Сохраняет состояние задач в файл
     private void save() {
-        String fileContent = String.join(DELIMITER, "id", "type", "name", "status", "description", "epic")
+        String fileContent = String.join(DELIMITER, "id",
+                "type",
+                "name",
+                "status",
+                "description",
+                "startTime",
+                "duration",
+                "epic")
                 + "\n";
 
         fileContent += mapToString(taskList) + mapToString(epicList) + mapToString(subTaskList);
@@ -141,6 +152,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     //Принимает список задач, возвращает строку для файла загрузки
     private <T extends Task> String mapToString(Map<Integer, T> map) {
+
         StringBuilder result = new StringBuilder();
 
         for (Map.Entry<Integer, T> entry : map.entrySet()) {
@@ -153,7 +165,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     value.getClass().getSimpleName(),
                     value.getName(),
                     value.getStatus().name(),
-                    value.getDescription()
+                    value.getDescription(),
+                    value.getStartTime() != null ? value.getStartTime().format(DATE_TIME_FORMATTER) : null,
+                    value.getDuration().toHours() + ":" + value.getDuration().toMinutesPart()
             )).append(",");
 
             if (value instanceof SubTask) {
@@ -174,15 +188,23 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String name = fields[2];
         TaskStatus status = TaskStatus.valueOf(fields[3]);
         String description = fields[4];
+        LocalDateTime startTime =  !fields[5].equals("null") ? LocalDateTime.parse(fields[5], DATE_TIME_FORMATTER) : null;
+
+        String[] hoursAndMinutesOfDuration = fields[6].split(":");
+
+        Duration durationHours = Duration.ofHours(Long.parseLong(hoursAndMinutesOfDuration[0]));
+        Duration durationMinutes = Duration.ofMinutes(Long.parseLong(hoursAndMinutesOfDuration[1]));
+        Duration duration = durationHours.plus(durationMinutes);
 
         if (id >= taskCount) taskCount = id + 1;
 
         switch (type) {
             case "Task":
-                Task task = new Task(name, description);
+                Task task = new Task(name, description, startTime, duration);
                 task.setId(id);
                 task.setStatus(status);
                 fm.taskList.put(id, task);
+                if(startTime != null && !fm.hasTimeConflict(task)) fm.sortedTasks.put(startTime, task);
                 break;
             case "Epic":
                 Epic epic = new Epic(name, description);
@@ -191,12 +213,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 fm.epicList.put(id, epic);
                 break;
             case "SubTask":
-                int epicId = Integer.parseInt(fields[5]);
-                SubTask subTask = new SubTask(name, description, epicId);
+                int epicId = Integer.parseInt(fields[7]);
+                SubTask subTask = new SubTask(name, description, epicId, startTime, duration);
                 subTask.setId(id);
                 subTask.setStatus(status);
                 fm.epicList.get(epicId).getSubTasksId().add(id);
                 fm.subTaskList.put(id, subTask);
+                if (startTime != null && !fm.hasTimeConflict(subTask)) fm.sortedTasks.put(subTask.getStartTime(), subTask);
+                fm.updateEpicDatesAndDuration(epicId);
                 break;
         }
     }
