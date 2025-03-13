@@ -1,9 +1,9 @@
 import managers.Managers;
+import managers.task_managers.FileBackedTaskManager;
+import managers.task_managers.TaskManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import managers.task_managers.FileBackedTaskManager;
-import managers.task_managers.TaskManager;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
@@ -13,30 +13,32 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-class FileBackedTaskManagerTest {
+class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
-    TaskManager managerForSave = Managers.getFileBackedManager();
+    static Path saveFile = Paths.get("Save.csv");
 
-    Path saveFile = Paths.get("Save.csv");
+    TaskManager managerForSave;
 
     FileWriter fw;
 
+    FileBackedTaskManagerTest() {
+        super(FileBackedTaskManager.loadFromFile(saveFile.toString()));
+    }
+
     @BeforeEach
     void setUp() throws IOException {
+        managerForSave = Managers.getFileBackedManager();
         fw = new FileWriter(saveFile.toString(), true);
     }
 
     @AfterEach
     void cleanUp() throws IOException {
-        managerForSave.subTaskClear();
-        managerForSave.taskClear();
-        managerForSave.epicClear();
-
         fw.close();
         Files.delete(saveFile);
     }
@@ -46,7 +48,10 @@ class FileBackedTaskManagerTest {
         String taskName = "saveTaskOnCreate";
         String taskDesk = "saveTaskOnCreateDesc";
 
-        Task task = new Task(taskName, taskDesk);
+        Task task = new Task(taskName,
+                taskDesk,
+                LocalDateTime.of(2025, 3, 9, 12, 50),
+                Duration.ofMinutes(40));
         managerForSave.createTask(task);
 
         String[] taskFields = Files.readAllLines(saveFile).get(1).split(",");
@@ -64,7 +69,11 @@ class FileBackedTaskManagerTest {
         Epic epic = new Epic("Не имеет значения", "Не имеет значения");
         managerForSave.createEpic(epic);
 
-        SubTask sb = new SubTask(taskName, taskDesk, epic.getId());
+        SubTask sb = new SubTask(taskName,
+                taskDesk,
+                epic.getId(),
+                LocalDateTime.of(2025, 3, 9, 12, 50),
+                Duration.ofMinutes(45));
         managerForSave.createSubTask(sb);
 
         String[] taskFields = Files.readAllLines(saveFile).get(2).split(",");
@@ -72,7 +81,7 @@ class FileBackedTaskManagerTest {
         boolean taskIsValid = (
                 taskFields[2].equals(taskName) &&
                         taskFields[4].equals(taskDesk) &&
-                        taskFields[5].equals(Integer.toString(epic.getId()))
+                        taskFields[7].equals(Integer.toString(epic.getId()))
         );
 
         assertTrue(taskIsValid, "Сабтаска в файле не соответствует созданной");
@@ -83,7 +92,10 @@ class FileBackedTaskManagerTest {
         String taskName = "saveTaskOnCreate";
         String taskDesk = "saveTaskOnCreateDesc";
 
-        Task task = new Task(taskName, taskDesk);
+        Task task = new Task(taskName,
+                taskDesk,
+                LocalDateTime.of(2025, 3, 9, 12, 50),
+                Duration.ofMinutes(40));
         managerForSave.createTask(task);
         managerForSave.removeTask(task.getId());
 
@@ -97,7 +109,10 @@ class FileBackedTaskManagerTest {
         String taskName = "loadTaskFromFileName";
         String taskDesk = "loadTaskFromFileDesc";
 
-        Task savedTask = new Task(taskName, taskDesk);
+        Task savedTask = new Task(taskName,
+                taskDesk,
+                LocalDateTime.of(2025, 3, 9, 12, 50),
+                Duration.ofMinutes(40));
 
         managerForSave.createTask(savedTask);
         TaskManager managerForLoad = FileBackedTaskManager.loadFromFile(saveFile.toString());
@@ -123,7 +138,11 @@ class FileBackedTaskManagerTest {
         Epic epic = new Epic("Не имеет значения", "Не имеет значения");
         managerForSave.createEpic(epic);
 
-        SubTask savedSubTask = new SubTask(taskName, taskDesk, epic.getId());
+        SubTask savedSubTask = new SubTask(taskName,
+                taskDesk,
+                epic.getId(),
+                LocalDateTime.of(2025, 3, 9, 12, 50),
+                Duration.ofMinutes(45));
         managerForSave.createSubTask(savedSubTask);
 
         TaskManager managerForLoad = FileBackedTaskManager.loadFromFile(saveFile.toString());
@@ -138,5 +157,14 @@ class FileBackedTaskManagerTest {
         );
 
         assertTrue(taskIsValid, "Сохраненная сабтаска не соответствует загруженной");
+    }
+
+    @Test
+    void testIOException() {
+        assertThrows(IOException.class, () -> {
+            String path = "test";
+            Files.createFile(Path.of(path));
+            FileBackedTaskManager.loadFromFile(path);
+        }, "Создание файла с не уникальным именем должно приводить к исключению");
     }
 }

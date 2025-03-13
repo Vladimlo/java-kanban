@@ -188,7 +188,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String name = fields[2];
         TaskStatus status = TaskStatus.valueOf(fields[3]);
         String description = fields[4];
-        LocalDateTime startTime =  !fields[5].equals("null") ? LocalDateTime.parse(fields[5], DATE_TIME_FORMATTER) : null;
+        LocalDateTime startTime = !fields[5].equals("null") ? LocalDateTime.parse(fields[5], DATE_TIME_FORMATTER) : null;
 
         String[] hoursAndMinutesOfDuration = fields[6].split(":");
 
@@ -204,7 +204,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 task.setId(id);
                 task.setStatus(status);
                 fm.taskList.put(id, task);
-                if(startTime != null && !fm.hasTimeConflict(task)) fm.sortedTasks.put(startTime, task);
+                if (startTime != null && !fm.hasTimeConflict(task)) fm.sortedTasks.put(startTime, task);
                 break;
             case "Epic":
                 Epic epic = new Epic(name, description);
@@ -219,7 +219,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 subTask.setStatus(status);
                 fm.epicList.get(epicId).getSubTasksId().add(id);
                 fm.subTaskList.put(id, subTask);
-                if (startTime != null && !fm.hasTimeConflict(subTask)) fm.sortedTasks.put(subTask.getStartTime(), subTask);
+                if (startTime != null && !fm.hasTimeConflict(subTask))
+                    fm.sortedTasks.put(subTask.getStartTime(), subTask);
                 fm.updateEpicDatesAndDuration(epicId);
                 break;
         }

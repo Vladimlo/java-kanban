@@ -183,7 +183,7 @@ public class InMemoryTaskManager implements TaskManager {
         SubTask removedSubtask = subTaskList.get(id);
 
         //Удаляем сабтаску из эпика
-        epic.getSubTasksId().remove(id);
+        epic.getSubTasksId().remove(Integer.valueOf(id));
 
         //Удаляем сабтаску из приоритезированного списка
         sortedTasks.remove(removedSubtask.getStartTime());

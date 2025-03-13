@@ -1,15 +1,23 @@
 import managers.Managers;
+import managers.task_managers.InMemoryTaskManager;
+import managers.task_managers.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import managers.task_managers.TaskManager;
 import tasks.Epic;
 import tasks.SubTask;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
-class InMemoryTaskManagerTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
     TaskManager tm;
+
+    InMemoryTaskManagerTest() {
+        super(new InMemoryTaskManager());
+    }
 
     @BeforeEach
     void preSet() {
@@ -21,8 +29,16 @@ class InMemoryTaskManagerTest {
         Epic epic = new Epic("Эпик с сабтасками", "В нем будет сабтаска, которую далее удалим");
         tm.createEpic(epic);
 
-        SubTask subTask = new SubTask("Сабтска", "Ее не будем удалять", epic.getId());
-        SubTask subTask2 = new SubTask("Сабтска", "А вот эту удалим", epic.getId());
+        SubTask subTask = new SubTask("Сабтска",
+                "Ее не будем удалять",
+                epic.getId(),
+                LocalDateTime.of(2025, 3, 9, 12, 50),
+                Duration.ofMinutes(45));
+        SubTask subTask2 = new SubTask("Сабтска",
+                "А вот эту удалим",
+                epic.getId(),
+                LocalDateTime.of(2025, 3, 9, 12, 50),
+                Duration.ofMinutes(45));
         tm.createSubTask(subTask);
         tm.createSubTask(subTask2);
 
@@ -36,8 +52,16 @@ class InMemoryTaskManagerTest {
         Epic epic = new Epic("Эпик с сабтасками", "В нем будет сабтаска, которую далее удалим");
         tm.createEpic(epic);
 
-        SubTask subTask = new SubTask("Сабтска", "Ее не будем удалять", epic.getId());
-        SubTask subTask2 = new SubTask("Сабтска", "А вот эту удалим", epic.getId());
+        SubTask subTask = new SubTask("Сабтска",
+                "Ее не будем удалять",
+                epic.getId(),
+                LocalDateTime.of(2025, 3, 9, 12, 50),
+                Duration.ofMinutes(45));
+        SubTask subTask2 = new SubTask("Сабтска",
+                "А вот эту удалим",
+                epic.getId(),
+                LocalDateTime.of(2025, 3, 9, 12, 50),
+                Duration.ofMinutes(45));
         tm.createSubTask(subTask);
         tm.createSubTask(subTask2);
 
