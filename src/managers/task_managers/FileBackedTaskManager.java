@@ -19,7 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     private static final String DELIMITER = ",";
 
