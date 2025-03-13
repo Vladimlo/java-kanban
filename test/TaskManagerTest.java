@@ -136,6 +136,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(result, extend, "Список приоритезированных задач не корректен");
     }
 
+    @Test
     void timeConflictNegativeTest2() {
         //Данный тест проверяет кейс, когда окончание одной задачи входит в диапазон уже имеющейся
         Task oldTask = new Task("Задача",
@@ -156,6 +157,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(result, extend, "Список приоритезированных задач не корректен");
     }
 
+    @Test
     void timeConflictNegativeTest3() {
         //Данный тест проверяет кейс, когда задача целиком входит в диапазон уже имеющейся
         Task oldTask = new Task("Задача",
