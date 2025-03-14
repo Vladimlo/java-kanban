@@ -1,4 +1,5 @@
 import managers.task_managers.FileBackedTaskManager;
+import tasks.Epic;
 import tasks.Task;
 
 import java.time.Duration;
@@ -32,6 +33,9 @@ public class Main {
                 "Которая полностью входит в другую но граничит датой окончания",
                 LocalDateTime.of(2025, 3, 9, 12, 50),
                 Duration.ofMinutes(40));
+
+        Epic epic = new Epic("Test", "Test");
+        fm.createEpic(epic);
 
         fm.createTask(taskCheckConflict1);
         fm.createTask(taskCheckConflict2);

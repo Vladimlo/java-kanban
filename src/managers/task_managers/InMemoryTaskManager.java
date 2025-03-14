@@ -238,7 +238,11 @@ public class InMemoryTaskManager implements TaskManager {
         epicList.get(epicId).setStatus(TaskStatus.IN_PROCESS);
     }
 
-    public void updateEpicDatesAndDuration(int epicId) {
+    public List<Task> getPrioritizedTasks() {
+        return sortedTasks.values().stream().toList();
+    }
+
+    protected void updateEpicDatesAndDuration(int epicId) {
         Epic updatedEpic = epicList.get(epicId);
 
         List<SubTask> epicSubtasks = getEpicSubtasks(updatedEpic.getId());
@@ -289,11 +293,7 @@ public class InMemoryTaskManager implements TaskManager {
         updatedEpic.setDuration(epicDuration);
     }
 
-    public List<Task> getPrioritizedTasks() {
-        return sortedTasks.values().stream().toList();
-    }
-
-    public boolean hasTimeConflict(Task task) {
+    protected boolean hasTimeConflict(Task task) {
         return sortedTasks.values().stream().filter(sortedTask -> {
                     //отбираем только те задачи, у которых конец не раньше начала добавляемой
                     return sortedTask.getEndTime().isAfter(task.getStartTime())

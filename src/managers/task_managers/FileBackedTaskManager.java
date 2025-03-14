@@ -58,7 +58,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public void createEpic(Epic epic) {
         super.createEpic(epic);
-        //Не вызываем save() т.к. а зачем нам эпик без подзадач
+        save();
     }
 
     @Override
@@ -167,7 +167,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     value.getStatus().name(),
                     value.getDescription(),
                     value.getStartTime() != null ? value.getStartTime().format(DATE_TIME_FORMATTER) : null,
-                    value.getDuration().toHours() + ":" + value.getDuration().toMinutesPart()
+                    value.getDuration() != null ? value.getDuration().toHours() +
+                            ":" + value.getDuration().toMinutesPart() : "null"
             )).append(",");
 
             if (value instanceof SubTask) {
@@ -189,12 +190,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         TaskStatus status = TaskStatus.valueOf(fields[3]);
         String description = fields[4];
         LocalDateTime startTime = !fields[5].equals("null") ? LocalDateTime.parse(fields[5], DATE_TIME_FORMATTER) : null;
+        Duration duration;
 
-        String[] hoursAndMinutesOfDuration = fields[6].split(":");
+        if (!fields[6].equals("null")) {
+            String[] hoursAndMinutesOfDuration = fields[6].split(":");
 
-        Duration durationHours = Duration.ofHours(Long.parseLong(hoursAndMinutesOfDuration[0]));
-        Duration durationMinutes = Duration.ofMinutes(Long.parseLong(hoursAndMinutesOfDuration[1]));
-        Duration duration = durationHours.plus(durationMinutes);
+            Duration durationHours = Duration.ofHours(Long.parseLong(hoursAndMinutesOfDuration[0]));
+            Duration durationMinutes = Duration.ofMinutes(Long.parseLong(hoursAndMinutesOfDuration[1]));
+            duration = durationHours.plus(durationMinutes);
+        } else {
+            duration = null;
+        }
 
         if (id >= taskCount) taskCount = id + 1;
 
