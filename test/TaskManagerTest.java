@@ -1,3 +1,4 @@
+import exceptions.TaskTimeConflictException;
 import managers.task_managers.TaskManager;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 abstract class TaskManagerTest<T extends TaskManager> {
 
@@ -20,7 +22,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void subtaskHaveEpic() {
+    void subtaskHaveEpic() throws TaskTimeConflictException {
         Epic epic = new Epic("Эпик", "Этот эпик будет связан с подзадачей");
         taskManager.createEpic(epic);
 
@@ -35,7 +37,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void epicStatusNEWTest() {
+    void epicStatusNEWTest() throws TaskTimeConflictException {
         Epic epic = new Epic("Эпик", "В нем будет сабтаска, в статусе NEW");
         taskManager.createEpic(epic);
 
@@ -50,7 +52,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void epicStatusDONETest() {
+    void epicStatusDONETest() throws TaskTimeConflictException {
         Epic epic = new Epic("Эпик", "В нем будет сабтаска, в статусе NEW");
         taskManager.createEpic(epic);
 
@@ -67,7 +69,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void epicStatusINPROGRESSTest1() {
+    void epicStatusINPROGRESSTest1() throws TaskTimeConflictException {
         //Данный кейс проверяет статус епика IN_PROGRESS когда тот содержит подзадачи в статусе NEW и DONE
         Epic epic = new Epic("Эпик", "В нем будут сабтаски, в статусе NEW и DONE");
         taskManager.createEpic(epic);
@@ -83,7 +85,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         SubTask newSubtask = new SubTask("Сабтска",
                 "Будет в статусе NEW",
                 epic.getId(),
-                LocalDateTime.of(2025, 3, 9, 12, 50),
+                LocalDateTime.of(2025, 3, 10, 12, 50),
                 Duration.ofMinutes(45));
         taskManager.createSubTask(newSubtask);
 
@@ -91,7 +93,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void epicStatusINPROGRESSTest2() {
+    void epicStatusINPROGRESSTest2() throws TaskTimeConflictException {
         //Данный кейс проверяет статус епика IN_PROGRESS когда тот содержит подзадачи в статусе IN_PROGRESS
         Epic epic = new Epic("Эпик", "В нем будут сабтаски, в статусе IN_PROCESS");
         taskManager.createEpic(epic);
@@ -101,22 +103,22 @@ abstract class TaskManagerTest<T extends TaskManager> {
                 epic.getId(),
                 LocalDateTime.of(2025, 3, 9, 12, 50),
                 Duration.ofMinutes(45));
-        subTask1.setStatus(TaskStatus.IN_PROCESS);
         taskManager.createSubTask(subTask1);
+        subTask1.setStatus(TaskStatus.IN_PROCESS);
 
         SubTask subTask2 = new SubTask("Сабтска",
                 "Будет в статусе IN_PROCESS",
                 epic.getId(),
-                LocalDateTime.of(2025, 3, 9, 12, 50),
+                LocalDateTime.of(2025, 3, 10, 12, 50),
                 Duration.ofMinutes(45));
-        subTask2.setStatus(TaskStatus.IN_PROCESS);
         taskManager.createSubTask(subTask2);
+        subTask2.setStatus(TaskStatus.IN_PROCESS);
 
         assertEquals(epic.getStatus(), TaskStatus.IN_PROCESS, "Эпик должен иметь статус IN_PROCESS");
     }
 
     @Test
-    void timeConflictNegativeTest1() {
+    void timeConflictNegativeTest1() throws TaskTimeConflictException {
         //Данный тест проверяет кейс, когда старт одной задачи входит в диапазон уже имеющейся
         Task oldTask = new Task("Задача",
                 "Начинается во время уже имеющейся",
@@ -124,20 +126,18 @@ abstract class TaskManagerTest<T extends TaskManager> {
                 Duration.ofMinutes(45));
         taskManager.createTask(oldTask);
 
-        Task newtask = new Task("Задача",
-                "Начинается во время уже имеющейся",
-                LocalDateTime.of(2025, 3, 9, 12, 55),
-                Duration.ofMinutes(45));
-        taskManager.createTask(newtask);
+        assertThrows(TaskTimeConflictException.class,() -> {
+            Task newtask = new Task("Задача",
+                    "Начинается во время уже имеющейся",
+                    LocalDateTime.of(2025, 3, 9, 12, 55),
+                    Duration.ofMinutes(45));
+            taskManager.createTask(newtask);
+        }, "Пересечение задач должно вызывать исключение");
 
-        List<Task> extend = List.of(oldTask);
-        List<Task> result = taskManager.getPrioritizedTasks();
-
-        assertEquals(result, extend, "Список приоритезированных задач не корректен");
     }
 
     @Test
-    void timeConflictNegativeTest2() {
+    void timeConflictNegativeTest2() throws TaskTimeConflictException {
         //Данный тест проверяет кейс, когда окончание одной задачи входит в диапазон уже имеющейся
         Task oldTask = new Task("Задача",
                 "Начинается во время уже имеющейся",
@@ -145,20 +145,17 @@ abstract class TaskManagerTest<T extends TaskManager> {
                 Duration.ofMinutes(45));
         taskManager.createTask(oldTask);
 
-        Task newtask = new Task("Задача",
-                "Начинается во время уже имеющейся",
-                LocalDateTime.of(2025, 3, 9, 12, 45),
-                Duration.ofMinutes(10));
-        taskManager.createTask(newtask);
-
-        List<Task> extend = List.of(oldTask);
-        List<Task> result = taskManager.getPrioritizedTasks();
-
-        assertEquals(result, extend, "Список приоритезированных задач не корректен");
+        assertThrows(TaskTimeConflictException.class,() -> {
+            Task newtask = new Task("Задача",
+                    "Начинается во время уже имеющейся",
+                    LocalDateTime.of(2025, 3, 9, 12, 45),
+                    Duration.ofMinutes(10));
+            taskManager.createTask(newtask);
+        }, "Пересечение задач должно вызывать исключение");
     }
 
     @Test
-    void timeConflictNegativeTest3() {
+    void timeConflictNegativeTest3() throws TaskTimeConflictException {
         //Данный тест проверяет кейс, когда задача целиком входит в диапазон уже имеющейся
         Task oldTask = new Task("Задача",
                 "Начинается во время уже имеющейся",
@@ -166,20 +163,17 @@ abstract class TaskManagerTest<T extends TaskManager> {
                 Duration.ofMinutes(45));
         taskManager.createTask(oldTask);
 
-        Task newtask = new Task("Задача",
-                "Начинается во время уже имеющейся",
-                LocalDateTime.of(2025, 3, 9, 12, 55),
-                Duration.ofMinutes(5));
-        taskManager.createTask(newtask);
-
-        List<Task> extend = List.of(oldTask);
-        List<Task> result = taskManager.getPrioritizedTasks();
-
-        assertEquals(result, extend, "Список приоритезированных задач не корректен");
+        assertThrows(TaskTimeConflictException.class,() -> {
+            Task newtask = new Task("Задача",
+                    "Начинается во время уже имеющейся",
+                    LocalDateTime.of(2025, 3, 9, 12, 55),
+                    Duration.ofMinutes(5));
+            taskManager.createTask(newtask);
+        }, "Пересечение задач должно вызывать исключение");
     }
 
     @Test
-    void timeConflictPositiveTest() {
+    void timeConflictPositiveTest() throws TaskTimeConflictException {
         Task oldTask = new Task("Задача",
                 "Начинается во время уже имеющейся",
                 LocalDateTime.of(2025, 3, 9, 12, 50),

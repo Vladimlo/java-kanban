@@ -1,6 +1,7 @@
 package managers.task_managers;
 
 import exceptions.ManagerSaveException;
+import exceptions.TaskTimeConflictException;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
@@ -50,7 +51,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void createTask(Task task) {
+    public void createTask(Task task) throws TaskTimeConflictException {
         super.createTask(task);
         save();
     }
@@ -62,13 +63,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void createSubTask(SubTask subTask) {
+    public void createSubTask(SubTask subTask) throws TaskTimeConflictException {
         super.createSubTask(subTask);
         save();
     }
 
     @Override
-    public void updateTask(Task task) {
+    public void updateTask(Task task) throws TaskTimeConflictException {
         super.updateTask(task);
         save();
     }
@@ -80,7 +81,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateSubTask(SubTask subTask) {
+    public void updateSubTask(SubTask subTask) throws TaskTimeConflictException {
         super.updateSubTask(subTask);
         save();
     }
@@ -210,7 +211,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 task.setId(id);
                 task.setStatus(status);
                 fm.taskList.put(id, task);
-                if (startTime != null && !fm.hasTimeConflict(task)) fm.sortedTasks.put(startTime, task);
+                try {
+                    if (startTime != null && !fm.hasTimeConflict(task)) fm.sortedTasks.put(startTime, task);
+                } catch (TaskTimeConflictException e) {
+                    System.out.println(e.getMessage());
+                    break;
+                }
                 break;
             case "Epic":
                 Epic epic = new Epic(name, description);
@@ -225,8 +231,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 subTask.setStatus(status);
                 fm.epicList.get(epicId).getSubTasksId().add(id);
                 fm.subTaskList.put(id, subTask);
-                if (startTime != null && !fm.hasTimeConflict(subTask))
-                    fm.sortedTasks.put(subTask.getStartTime(), subTask);
+                try {
+                    if (startTime != null && !fm.hasTimeConflict(subTask))
+                        fm.sortedTasks.put(subTask.getStartTime(), subTask);
+                } catch (TaskTimeConflictException e) {
+                    System.out.println(e.getMessage());
+                    break;
+                }
                 fm.updateEpicDatesAndDuration(epicId);
                 break;
         }

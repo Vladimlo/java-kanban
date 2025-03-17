@@ -12,7 +12,7 @@ import java.net.http.HttpResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TaskHandlerTest {
+public abstract class BaseHandlerTest {
 
     @BeforeEach
     void setUp() {
@@ -33,7 +33,7 @@ public class TaskHandlerTest {
 
     @Test
     void getTasks200StatusCode() throws IOException, InterruptedException {
-        URI uri = URI.create("http://localhost:8080/tasks");
+        URI uri = URI.create(getUri());
 
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -50,7 +50,7 @@ public class TaskHandlerTest {
     @Test
     void getTask200StatusCode() throws IOException, InterruptedException {
         createTask();
-        URI uri = URI.create("http://localhost:8080/tasks/1");
+        URI uri = URI.create(getUri() + getUriWithId());
 
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -67,7 +67,7 @@ public class TaskHandlerTest {
     @Test
     void deleteTask201StatusCodeTest() throws IOException, InterruptedException {
         createTask();
-        URI uri = URI.create("http://localhost:8080/tasks/1");
+        URI uri = URI.create(getUri() + getUriWithId());
 
         HttpRequest request = HttpRequest.newBuilder()
                 .DELETE()
@@ -81,15 +81,13 @@ public class TaskHandlerTest {
         assertEquals(201, response.statusCode(), "Ошибка при удалении задачи");
     }
 
-    private HttpResponse<String> createTask() throws IOException, InterruptedException {
-        URI uri = URI.create("http://localhost:8080/tasks");
+    HttpResponse<String> createEpic() throws IOException, InterruptedException {
+        URI uri = URI.create("http://localhost:8080/epics");
 
         String requestBody = """
                 {
-                	"name":"name",
-                	"description":"description",
-                	"startTime":"19.03.2025 14:00",
-                	"duration":"1:45"
+                    "name":"epic",
+                    "description":"epicDescription"
                 }
                 """;
 
@@ -102,4 +100,9 @@ public class TaskHandlerTest {
         HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
         return client.send(request, handler);
     }
+
+    abstract HttpResponse<String> createTask() throws IOException, InterruptedException;
+
+    abstract String getUri();
+    abstract String getUriWithId();
 }

@@ -1,5 +1,6 @@
 package managers.task_managers;
 
+import exceptions.TaskTimeConflictException;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
@@ -25,23 +26,29 @@ public interface TaskManager {
     //Получение задач по id
     Task getTask(int id);
 
+    Task getTask(int id, boolean addToHistiry);
+
     Epic getEpic(int id);
+
+    Epic getEpic(int id, boolean addToHistiry);
 
     SubTask getSubTask(int id);
 
+    SubTask getSubTask(int id, boolean addToHistiry);
+
     //Создание задач
-    void createTask(Task task);
+    void createTask(Task task) throws TaskTimeConflictException;
 
     void createEpic(Epic epic);
 
-    void createSubTask(SubTask subTask);
+    void createSubTask(SubTask subTask) throws TaskTimeConflictException;
 
     //Обновление задач
-    void updateTask(Task task);
+    void updateTask(Task task) throws TaskTimeConflictException;
 
     void updateEpic(Epic epic);
 
-    void updateSubTask(SubTask subTask);
+    void updateSubTask(SubTask subTask) throws TaskTimeConflictException;
 
     //Удаление задач
     void removeTask(int id);

@@ -1,3 +1,4 @@
+import exceptions.TaskTimeConflictException;
 import managers.Managers;
 import managers.task_managers.InMemoryTaskManager;
 import managers.task_managers.TaskManager;
@@ -25,7 +26,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
     @Test
-    void removedSubtaskRemovedFromEpic() {
+    void removedSubtaskRemovedFromEpic() throws TaskTimeConflictException {
         Epic epic = new Epic("Эпик с сабтасками", "В нем будет сабтаска, которую далее удалим");
         tm.createEpic(epic);
 
@@ -37,7 +38,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         SubTask subTask2 = new SubTask("Сабтска",
                 "А вот эту удалим",
                 epic.getId(),
-                LocalDateTime.of(2025, 3, 9, 12, 50),
+                LocalDateTime.of(2025, 3, 10, 12, 50),
                 Duration.ofMinutes(45));
         tm.createSubTask(subTask);
         tm.createSubTask(subTask2);
@@ -48,7 +49,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
     @Test
-    void clearSubtasksRemovedFromEpic() {
+    void clearSubtasksRemovedFromEpic() throws TaskTimeConflictException {
         Epic epic = new Epic("Эпик с сабтасками", "В нем будет сабтаска, которую далее удалим");
         tm.createEpic(epic);
 
@@ -60,7 +61,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         SubTask subTask2 = new SubTask("Сабтска",
                 "А вот эту удалим",
                 epic.getId(),
-                LocalDateTime.of(2025, 3, 9, 12, 50),
+                LocalDateTime.of(2025, 3, 10, 12, 50),
                 Duration.ofMinutes(45));
         tm.createSubTask(subTask);
         tm.createSubTask(subTask2);

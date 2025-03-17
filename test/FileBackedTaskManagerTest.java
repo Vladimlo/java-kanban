@@ -1,3 +1,4 @@
+import exceptions.TaskTimeConflictException;
 import managers.Managers;
 import managers.task_managers.FileBackedTaskManager;
 import managers.task_managers.TaskManager;
@@ -44,7 +45,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     }
 
     @Test
-    void saveTaskOnCreate() throws IOException {
+    void saveTaskOnCreate() throws IOException, TaskTimeConflictException {
         String taskName = "saveTaskOnCreate";
         String taskDesk = "saveTaskOnCreateDesc";
 
@@ -62,7 +63,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     }
 
     @Test
-    void saveSubTaskOnCreate() throws IOException {
+    void saveSubTaskOnCreate() throws IOException, TaskTimeConflictException {
         String taskName = "saveSubTaskOnCreate";
         String taskDesk = "saveSubTaskOnCreateDesc";
 
@@ -88,7 +89,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     }
 
     @Test
-    void deleteSubtaskFromFileOnDelete() throws IOException {
+    void deleteSubtaskFromFileOnDelete() throws IOException, TaskTimeConflictException {
         String taskName = "saveTaskOnCreate";
         String taskDesk = "saveTaskOnCreateDesc";
 
@@ -105,7 +106,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     }
 
     @Test
-    void loadTaskFromFile() throws IOException {
+    void loadTaskFromFile() throws IOException, TaskTimeConflictException {
         String taskName = "loadTaskFromFileName";
         String taskDesk = "loadTaskFromFileDesc";
 
@@ -131,7 +132,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     }
 
     @Test
-    void loadSubTaskFromFile() throws IOException {
+    void loadSubTaskFromFile() throws IOException, TaskTimeConflictException {
         String taskName = "loadSubTaskFromFile";
         String taskDesk = "loadSubTaskFromFileDesc";
 

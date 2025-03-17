@@ -1,3 +1,4 @@
+import exceptions.TaskTimeConflictException;
 import managers.task_managers.FileBackedTaskManager;
 import tasks.Epic;
 import tasks.Task;
@@ -7,7 +8,7 @@ import java.time.LocalDateTime;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws TaskTimeConflictException {
 
         FileBackedTaskManager fm = new FileBackedTaskManager("Save.csv");
 

@@ -10,7 +10,7 @@ public class Task {
 
     private Integer id;
 
-    private TaskStatus status;
+    private TaskStatus status = TaskStatus.NEW;
 
     private LocalDateTime startTime;
 

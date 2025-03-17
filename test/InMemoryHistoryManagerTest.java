@@ -1,3 +1,4 @@
+import exceptions.TaskTimeConflictException;
 import managers.Managers;
 import managers.task_managers.InMemoryTaskManager;
 import managers.task_managers.TaskManager;
@@ -26,7 +27,7 @@ class InMemoryHistoryManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
     @Test
-    void removedTasksRemoveFromHistoy() {
+    void removedTasksRemoveFromHistoy() throws TaskTimeConflictException {
         Epic epic = new Epic("Обычный эпик", "Его не будем удалять");
         Epic epic2 = new Epic("Обычный эпик", "Его будем удалять");
         tm.createEpic(epic);
@@ -56,12 +57,12 @@ class InMemoryHistoryManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         tm.createTask(task);
         tm.createTask(task2);
 
-        tm.getEpic(epic.getId());
-        tm.getEpic(epic2.getId());
-        tm.getSubTask(subTask.getId());
-        tm.getSubTask(subTask2.getId());
-        tm.getTask(task.getId());
-        tm.getTask(task2.getId());
+        tm.getEpic(epic.getId(), true);
+        tm.getEpic(epic2.getId(), true);
+        tm.getSubTask(subTask.getId(), true);
+        tm.getSubTask(subTask2.getId(), true);
+        tm.getTask(task.getId(), true);
+        tm.getTask(task2.getId(), true);
 
         tm.removeEpic(epic2.getId());
         tm.removeEpic(subTask2.getId());
@@ -71,7 +72,7 @@ class InMemoryHistoryManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
     @Test
-    void clearTasksRemoveFromHistory() {
+    void clearTasksRemoveFromHistory() throws TaskTimeConflictException {
         Epic epic = new Epic("Обычный эпик", "Удалим");
         tm.createEpic(epic);
 
@@ -100,7 +101,7 @@ class InMemoryHistoryManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
     @Test
-    void removingNonUniqueTasksFromHistory() {
+    void removingNonUniqueTasksFromHistory() throws TaskTimeConflictException {
         Task task = new Task("Обычная таска",
                 "Запросим ее 2 раза",
                 LocalDateTime.of(2025, 3, 9, 12, 50),
@@ -112,16 +113,16 @@ class InMemoryHistoryManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         tm.createTask(task);
         tm.createTask(task2);
 
-        tm.getTask(task2.getId());
-        tm.getTask(task2.getId());
-        tm.getTask(task.getId());
-        tm.getTask(task.getId());
+        tm.getTask(task2.getId(), true);
+        tm.getTask(task2.getId(), true);
+        tm.getTask(task.getId(), true);
+        tm.getTask(task.getId(), true);
 
         assertEquals(tm.getHistory().size(), 2, "В истории должно быть 2 записи");
     }
 
     @Test
-    void nonUniqueTasksAddedToTheEnd() {
+    void nonUniqueTasksAddedToTheEnd() throws TaskTimeConflictException {
         Task task = new Task("Обычная таска",
                 "Запросим ее 2 раза",
                 LocalDateTime.of(2025, 3, 9, 12, 50),
@@ -133,9 +134,9 @@ class InMemoryHistoryManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         tm.createTask(task);
         tm.createTask(task2);
 
-        tm.getTask(task.getId());
-        tm.getTask(task2.getId());
-        tm.getTask(task.getId());
+        tm.getTask(task.getId(), true);
+        tm.getTask(task2.getId(), true);
+        tm.getTask(task.getId(), true);
 
         assertEquals(tm.getHistory().get(1), task, "Элемент должен добавляться в конец истории" +
                 " даже если он не уникальный");
