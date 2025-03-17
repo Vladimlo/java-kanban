@@ -104,5 +104,6 @@ public abstract class BaseHandlerTest {
     abstract HttpResponse<String> createTask() throws IOException, InterruptedException;
 
     abstract String getUri();
+
     abstract String getUriWithId();
 }

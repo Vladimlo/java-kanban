@@ -38,5 +38,4 @@ public class PrioritizedHandlerTest {
 
         assertEquals(200, response.statusCode(), "Ошибка получения приоритезированных задач");
     }
-
 }

@@ -126,7 +126,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
                 Duration.ofMinutes(45));
         taskManager.createTask(oldTask);
 
-        assertThrows(TaskTimeConflictException.class,() -> {
+        assertThrows(TaskTimeConflictException.class, () -> {
             Task newtask = new Task("Задача",
                     "Начинается во время уже имеющейся",
                     LocalDateTime.of(2025, 3, 9, 12, 55),
@@ -145,7 +145,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
                 Duration.ofMinutes(45));
         taskManager.createTask(oldTask);
 
-        assertThrows(TaskTimeConflictException.class,() -> {
+        assertThrows(TaskTimeConflictException.class, () -> {
             Task newtask = new Task("Задача",
                     "Начинается во время уже имеющейся",
                     LocalDateTime.of(2025, 3, 9, 12, 45),
@@ -163,7 +163,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
                 Duration.ofMinutes(45));
         taskManager.createTask(oldTask);
 
-        assertThrows(TaskTimeConflictException.class,() -> {
+        assertThrows(TaskTimeConflictException.class, () -> {
             Task newtask = new Task("Задача",
                     "Начинается во время уже имеющейся",
                     LocalDateTime.of(2025, 3, 9, 12, 55),

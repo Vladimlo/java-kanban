@@ -1,7 +1,7 @@
 import java.io.IOException;
 import java.net.http.HttpResponse;
 
-public class EpicHandlerTest extends BaseHandlerTest{
+public class EpicHandlerTest extends BaseHandlerTest {
     @Override
     HttpResponse<String> createTask() throws IOException, InterruptedException {
         return createEpic();

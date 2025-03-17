@@ -5,7 +5,7 @@ import managers.task_managers.TaskManager;
 
 import java.io.IOException;
 
-public class PrioritizedHandler extends BaseHttpHandler{
+public class PrioritizedHandler extends BaseHttpHandler {
     public PrioritizedHandler(TaskManager tm) {
         super(tm);
     }

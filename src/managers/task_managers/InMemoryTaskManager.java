@@ -192,7 +192,7 @@ public class InMemoryTaskManager implements TaskManager {
             sortedTasks.put(subTask.getStartTime(), subTask);
             subTaskList.put(subTask.getId(), subTask);
             //Старый эпик может быть удален
-            if (oldEpic != null ) oldEpic.getSubTasksId().remove(Integer.valueOf(updatedSubTask.getId()));
+            if (oldEpic != null) oldEpic.getSubTasksId().remove(Integer.valueOf(updatedSubTask.getId()));
             newEpic.getSubTasksId().add(subTask.getId());
             updateEpicDatesAndDuration(newEpic.getId());
             updateEpicStatus(newEpic.getId());
@@ -259,7 +259,7 @@ public class InMemoryTaskManager implements TaskManager {
         int inProgressCount = 0;
         int newCount = 0;
 
-        if(epicSubtasks.isEmpty()) {
+        if (epicSubtasks.isEmpty()) {
             epicList.get(epicId).setStatus(TaskStatus.NEW);
             return;
         }

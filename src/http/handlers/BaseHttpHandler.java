@@ -50,7 +50,7 @@ public class BaseHttpHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         method = exchange.getRequestMethod();
         uriElements = exchange.getRequestURI().getPath().split("/");
-        String requestBody = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+        requestBody = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
         je = JsonParser.parseString(requestBody);
 
         if (je.isJsonObject()) {
