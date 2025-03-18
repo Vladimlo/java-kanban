@@ -65,10 +65,8 @@ public class SubTaskHandler extends BaseHttpHandler {
     }
 
     private void getSubTask(HttpExchange exchange, String textTaskId) throws IOException {
-        int taskId;
-
         try {
-            taskId = Integer.parseInt(textTaskId);
+            int taskId = Integer.parseInt(textTaskId);
 
             SubTask task = tm.getSubTask(taskId, true);
 
@@ -146,10 +144,8 @@ public class SubTaskHandler extends BaseHttpHandler {
     }
 
     private void deleteSubTask(HttpExchange exchange, String textTaskId) throws IOException {
-        int taskId;
-
         try {
-            taskId = Integer.parseInt(textTaskId);
+            int taskId = Integer.parseInt(textTaskId);
             SubTask task = tm.getSubTask(taskId);
 
             if (task == null) {

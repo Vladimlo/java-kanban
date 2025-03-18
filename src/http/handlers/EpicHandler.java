@@ -64,10 +64,8 @@ public class EpicHandler extends BaseHttpHandler {
     }
 
     private void getEpic(HttpExchange exchange, String textEpicId) throws IOException {
-        int epicId;
-
         try {
-            epicId = Integer.parseInt(textEpicId);
+            int epicId = Integer.parseInt(textEpicId);
 
             Epic epic = tm.getEpic(epicId, true);
 
@@ -92,10 +90,8 @@ public class EpicHandler extends BaseHttpHandler {
     }
 
     private void deleteEpic(HttpExchange exchange, String textEpicId) throws IOException {
-        int epicId;
-
         try {
-            epicId = Integer.parseInt(textEpicId);
+            int epicId = Integer.parseInt(textEpicId);
             Epic epic = tm.getEpic(epicId);
 
             if (epic == null) {
@@ -113,10 +109,8 @@ public class EpicHandler extends BaseHttpHandler {
     }
 
     private void getSubtasks(HttpExchange exchange, String textEpicId) throws IOException {
-        int epicId;
-
         try {
-            epicId = Integer.parseInt(textEpicId);
+            int epicId = Integer.parseInt(textEpicId);
             Epic epic = tm.getEpic(epicId);
 
             if (epic == null) {

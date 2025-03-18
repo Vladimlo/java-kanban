@@ -15,12 +15,12 @@ import java.time.LocalDateTime;
 public class BaseHttpHandler implements HttpHandler {
 
     protected TaskManager tm;
-    String method;
-    String[] uriElements;
-    Gson gson;
-    String requestBody;
-    JsonElement je;
-    JsonObject jo;
+    protected String method;
+    protected String[] uriElements;
+    protected Gson gson;
+    protected String requestBody;
+    protected JsonElement je;
+    protected JsonObject jo;
 
     public BaseHttpHandler(TaskManager tm) {
         this.tm = tm;
@@ -31,6 +31,17 @@ public class BaseHttpHandler implements HttpHandler {
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .registerTypeAdapter(Duration.class, new DurationAdapter())
                 .create();
+    }
+
+    public void handle(HttpExchange exchange) throws IOException {
+        method = exchange.getRequestMethod();
+        uriElements = exchange.getRequestURI().getPath().split("/");
+        requestBody = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+        je = JsonParser.parseString(requestBody);
+
+        if (je.isJsonObject()) {
+            jo = JsonParser.parseString(requestBody).getAsJsonObject();
+        }
     }
 
     protected void sendResponse(HttpExchange h, String text, int code) throws IOException {
@@ -45,16 +56,5 @@ public class BaseHttpHandler implements HttpHandler {
         h.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
         h.sendResponseHeaders(code, 0);
         h.close();
-    }
-
-    public void handle(HttpExchange exchange) throws IOException {
-        method = exchange.getRequestMethod();
-        uriElements = exchange.getRequestURI().getPath().split("/");
-        requestBody = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-        je = JsonParser.parseString(requestBody);
-
-        if (je.isJsonObject()) {
-            jo = JsonParser.parseString(requestBody).getAsJsonObject();
-        }
     }
 }

@@ -65,11 +65,9 @@ public class TaskHandler extends BaseHttpHandler {
     }
 
     private void getTask(HttpExchange exchange, String textTaskId) throws IOException {
-        int taskId;
 
         try {
-            taskId = Integer.parseInt(textTaskId);
-
+            int taskId = Integer.parseInt(textTaskId);
             Task task = tm.getTask(taskId, true);
 
             if (task == null) {
@@ -124,10 +122,8 @@ public class TaskHandler extends BaseHttpHandler {
     }
 
     private void deleteTask(HttpExchange exchange, String textTaskId) throws IOException {
-        int taskId;
-
         try {
-            taskId = Integer.parseInt(textTaskId);
+            int taskId = Integer.parseInt(textTaskId);
             Task task = tm.getTask(taskId);
 
             if (task == null) {
